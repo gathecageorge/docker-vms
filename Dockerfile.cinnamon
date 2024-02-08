@@ -1,0 +1,77 @@
+FROM ubuntu:jammy
+
+# RUN apt update && \
+#     DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch cinnamon locales sudo
+
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch cinnamon-desktop-environment locales sudo wget software-properties-common curl
+
+# RUN apt update && \
+#     DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch ubuntucinnamon-desktop locales sudo
+
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y xrdp tigervnc-standalone-server && \
+    adduser xrdp ssl-cert && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8
+
+# Install firefox browser
+RUN add-apt-repository -y ppa:mozillateam/ppa && apt update && DEBIAN_FRONTEND=noninteractive apt install -y firefox-esr
+
+# Install brave browser
+# RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
+#     && echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"| tee /etc/apt/sources.list.d/brave-browser-release.list \
+#     && apt update && DEBIAN_FRONTEND=noninteractive apt install -y brave-browser
+
+# Install teamviewer
+# RUN wget https://download.teamviewer.com/download/linux/teamviewer_arm64.deb \
+#     && DEBIAN_FRONTEND=noninteractive apt install -y ./teamviewer_arm64.deb \
+#     && rm teamviewer_arm64.deb
+
+# Install jellyfin
+RUN wget https://repo.jellyfin.org/releases/server/linux/stable/combined/jellyfin_10.8.13_arm64.tar.gz \
+    && tar xvzf jellyfin_10.8.13_arm64.tar.gz && mv jellyfin_10.8.13 /opt/jellyfin && rm jellyfin_10.8.13_arm64.tar.gz \
+    && curl -fsSL https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin.gpg > /dev/null \
+    && echo "deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release ) $( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release ) main" | sudo tee /etc/apt/sources.list.d/jellyfin.list \
+    && echo '#!/bin/bash\nJELLYFINDIR="/opt/jellyfin"\nFFMPEGDIR="/usr/share/jellyfin-ffmpeg"\nDIRECTORY=$HOME/jellyfin \n\n$JELLYFINDIR/jellyfin \\\n-d $DIRECTORY/data \\\n-C $DIRECTORY/cache \\\n-c $DIRECTORY/config \\\n-l $DIRECTORY/log \\\n--ffmpeg $FFMPEGDIR/ffmpeg > /dev/null 2>&1 &' | tee /usr/local/bin/start-jellyfin.sh \
+    && apt update && DEBIAN_FRONTEND=noninteractive apt install jellyfin-ffmpeg \
+    && chmod +x /usr/local/bin/start-jellyfin.sh
+
+# Remove unneeded tools
+# RUN apt purge --remove -y celluloid libreoffice-base-core* libreoffice-calc* libreoffice-common* libreoffice-core* libreoffice-draw* \
+#     libreoffice-gtk3* libreoffice-impress* libreoffice-math* gnome-mahjongg gnome-sudoku gnome-2048 gnome-chess \
+#     thunderbird rhythmbox mpv zutty snapd && apt autoremove -y
+
+ARG USER=george
+ARG PASS=gg
+
+RUN useradd -m $USER -p $(openssl passwd $PASS) && \
+    usermod -aG sudo $USER && \
+    chsh -s /bin/bash $USER
+
+RUN mkdir /docker && echo "#!/bin/sh\n\
+export XDG_SESSION_DESKTOP=cinnamon\n\
+export XDG_SESSION_TYPE=x11\n\
+export XDG_CURRENT_DESKTOP=X-Cinnamon\n\
+export XDG_CONFIG_DIRS=/etc/xdg/xdg-cinnamon:/etc/xdg" > /docker/env && chmod 555 /docker/env
+
+RUN echo "#!/bin/sh\n\
+. /docker/env\n\
+exec dbus-run-session -- cinnamon-session" > /docker/xstartup && chmod +x /docker/xstartup
+
+RUN mkdir /home/$USER/.vnc && \
+    echo $PASS | vncpasswd -f > /home/$USER/.vnc/passwd && \
+    chmod 0600 /home/$USER/.vnc/passwd && \
+    chown -R $USER:$USER /home/$USER/.vnc \
+    && echo -e '#!/bin/bash\n\nservice xrdp stop\nrm /var/run/xrdp/xrdp.pid\nrm /var/run/xrdp/xrdp-sesman.pid\nservice xrdp start' | tee /usr/local/bin/restart-rdp.sh && chmod +x /usr/local/bin/restart-rdp.sh
+
+RUN cp -f /docker/xstartup /etc/xrdp/startwm.sh && \
+    cp -f /docker/xstartup /home/$USER/.vnc/xstartup
+
+RUN echo "#!/bin/sh\n\
+sudo -u $USER -g $USER -- vncserver -rfbport 5902 -geometry 1920x1080 -depth 24 -verbose -localhost no -autokill no" > /docker/startvnc && chmod +x /docker/startvnc
+
+EXPOSE 3389
+EXPOSE 5902
+
+CMD service dbus start; /usr/lib/systemd/systemd-logind & service xrdp start; /docker/startvnc; bash
