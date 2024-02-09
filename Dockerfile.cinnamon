@@ -1,22 +1,20 @@
-FROM ubuntu:jammy
-
+# FROM ubuntu:jammy
 # RUN apt update && \
-#     DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch cinnamon locales sudo
+#     DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch cinnamon-desktop-environment locales sudo wget software-properties-common curl
+# # Install firefox browser
+# RUN add-apt-repository -y ppa:mozillateam/ppa && apt update && DEBIAN_FRONTEND=noninteractive apt install -y firefox-esr && apt purge --remove -y firefox
 
+FROM ubuntu:lunar
 RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch cinnamon-desktop-environment locales sudo wget software-properties-common curl
-
-# RUN apt update && \
-#     DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch ubuntucinnamon-desktop locales sudo
+    DEBIAN_FRONTEND=noninteractive apt install -y nano neofetch ubuntucinnamon-desktop locales sudo
+#Install firefox browser
+#RUN add-apt-repository -y ppa:mozillateam/ppa && apt update && DEBIAN_FRONTEND=noninteractive apt install -y firefox-esr
 
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install -y xrdp tigervnc-standalone-server && \
     adduser xrdp ssl-cert && \
     locale-gen en_US.UTF-8 && \
     update-locale LANG=en_US.UTF-8
-
-# Install firefox browser
-RUN add-apt-repository -y ppa:mozillateam/ppa && apt update && DEBIAN_FRONTEND=noninteractive apt install -y firefox-esr
 
 # Install brave browser
 # RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
@@ -34,7 +32,7 @@ RUN wget https://repo.jellyfin.org/releases/server/linux/stable/combined/jellyfi
     && curl -fsSL https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin.gpg > /dev/null \
     && echo "deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release ) $( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release ) main" | sudo tee /etc/apt/sources.list.d/jellyfin.list \
     && echo '#!/bin/bash\nJELLYFINDIR="/opt/jellyfin"\nFFMPEGDIR="/usr/share/jellyfin-ffmpeg"\nDIRECTORY=$HOME/jellyfin \n\n$JELLYFINDIR/jellyfin \\\n-d $DIRECTORY/data \\\n-C $DIRECTORY/cache \\\n-c $DIRECTORY/config \\\n-l $DIRECTORY/log \\\n--ffmpeg $FFMPEGDIR/ffmpeg > /dev/null 2>&1 &' | tee /usr/local/bin/start-jellyfin.sh \
-    && apt update && DEBIAN_FRONTEND=noninteractive apt install jellyfin-ffmpeg \
+    && apt update && DEBIAN_FRONTEND=noninteractive apt install jellyfin-ffmpeg5 \
     && chmod +x /usr/local/bin/start-jellyfin.sh
 
 # Remove unneeded tools
