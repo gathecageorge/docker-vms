@@ -21,14 +21,14 @@ RUN apt update && \
 # Install jellyfin
 RUN wget https://repo.jellyfin.org/releases/server/linux/stable/combined/jellyfin_10.8.13_arm64.tar.gz \
     && tar xvzf jellyfin_10.8.13_arm64.tar.gz \
-    && mv jellyfin_10.8.13 /opt/jellyfin \
+    && sudo mv jellyfin_10.8.13 /opt/jellyfin \
     && rm jellyfin_10.8.13_arm64.tar.gz \
     && curl -fsSL https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin.gpg > /dev/null \
     && echo "deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/$( awk -F'=' '/^ID=/{ print $NF }' /etc/os-release ) $( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release ) main" | sudo tee /etc/apt/sources.list.d/jellyfin.list \
-    && echo '#!/bin/bash\nJELLYFINDIR="/opt/jellyfin"\nFFMPEGDIR="/usr/share/jellyfin-ffmpeg"\nDIRECTORY=$HOME/jellyfin \n\n$JELLYFINDIR/jellyfin \\\n-d $DIRECTORY/data \\\n-C $DIRECTORY/cache \\\n-c $DIRECTORY/config \\\n-l $DIRECTORY/log \\\n--ffmpeg $FFMPEGDIR/ffmpeg > /dev/null 2>&1 &' | tee /usr/local/bin/start-jellyfin.sh \
-    && apt update \
-    && apt install jellyfin-ffmpeg5 \
-    && chmod +x /usr/local/bin/start-jellyfin.sh
+    && echo -e '#!/bin/bash\nJELLYFINDIR="/opt/jellyfin"\nFFMPEGDIR="/usr/share/jellyfin-ffmpeg"\nDIRECTORY=$HOME/jellyfin \n\n$JELLYFINDIR/jellyfin \\\n-d $DIRECTORY/data \\\n-C $DIRECTORY/cache \\\n-c $DIRECTORY/config \\\n-l $DIRECTORY/log \\\n--ffmpeg $FFMPEGDIR/ffmpeg > /dev/null 2>&1 &' | sudo tee /usr/local/bin/start-jellyfin.sh \
+    && sudo apt update \
+    && sudo apt install -y jellyfin-ffmpeg5 \
+    && sudo chmod +x /usr/local/bin/start-jellyfin.sh
 
 # Remove unneeded tools
 # RUN apt purge --remove -y celluloid \
