@@ -77,7 +77,7 @@ exit 0
 "
 
 # Save the service unit file to the systemd directory
-echo -e "$SERVICE_UNIT" | sudo tee "/etc/init.d/$SERVICE_NAME" > /dev/null
+echo "$SERVICE_UNIT" | sudo tee "/etc/init.d/$SERVICE_NAME" > /dev/null
 
 # Reload init.d and start the service
 sudo chmod +x /etc/init.d/"$SERVICE_NAME"
