@@ -1,4 +1,13 @@
 ---
+volumes:
+  # ubuntu-alpine_data: {}
+  ubuntu-xfce_data: {}
+  # ubuntu-mate_data: {}
+  # ubuntu-kde_data: {}
+  # ubuntu-i3_data: {}
+  # ubuntu-openbox_data: {}
+  # ubuntu-icewm_data: {}
+
 # https://hub.docker.com/r/linuxserver/webtop
 # https://www.linuxserver.io/blog/2021-05-05-meet-webtops-a-linux-desktop-environment-in-your-browser
 services:
@@ -12,8 +21,8 @@ services:
   #     - TZ=Etc/UTC
   #     - SUBFOLDER=/ #optional
   #     - TITLE=XFCE-Alpine-Media-Server
-  #   # volumes:
-  #     # - /path/to/data:/config
+  #   volumes:
+  #     - ubuntu-alpine_data:/config
   #     # - /var/run/docker.sock:/var/run/docker.sock #optional
   #   ports:
   #     - 3000:3000
@@ -30,6 +39,9 @@ services:
       - TZ=Etc/UTC
       - SUBFOLDER=/ #optional
       - TITLE=XFCE-Ubuntu-Media-Server
+    volumes:
+      - ubuntu-xfce_data:/config
+      - ./jellyfin.sh:/config/jellyfin-setup.sh
     ports:
       - 3007:3000
       - 8096:8096
@@ -42,6 +54,8 @@ services:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ubuntu-mate_data:/config
   #   ports:
   #     - 3002:3000
   #   shm_size: "1gb" #optional
@@ -53,6 +67,8 @@ services:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ubuntu-kde_data:/config
   #   ports:
   #     - 3003:3000
   #   shm_size: "1gb" #optional
@@ -64,6 +80,8 @@ services:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ubuntu-i3_data:/config
   #   ports:
   #     - 3004:3000
   #   shm_size: "1gb" #optional
@@ -75,6 +93,8 @@ services:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ubuntu-openbox_data:/config
   #   ports:
   #     - 3005:3000
   #   shm_size: "1gb" #optional
@@ -86,6 +106,8 @@ services:
   #     - PUID=1000
   #     - PGID=1000
   #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ubuntu-icewm_data:/config
   #   ports:
   #     - 3006:3000
   #   shm_size: "1gb" #optional
