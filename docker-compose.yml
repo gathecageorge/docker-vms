@@ -33,6 +33,7 @@ services:
 
   ubuntu-xfce:
     image: lscr.io/linuxserver/webtop:ubuntu-xfce
+    hostname: media-server
     environment:
       - PUID=1000
       - PGID=1000
