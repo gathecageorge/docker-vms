@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  windows-arm:
+    image: dockurr/windows-arm
+    volumes:
+      - windows-arm:/storage
+    devices:
+      - /dev/kvm
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    environment:
+      RAM_SIZE: "4G"
+      CPU_CORES: "4"
+      DISK_SIZE: "256G"
+    stop_grace_period: 2m
+    restart: unless-stopped
+
+volumes:
+  windows-arm: {}
