@@ -8,8 +8,12 @@ sudo apt update
 sudo apt install -y psmisc wget curl nano geany transmission
 
 # Download, extract jellyfin
-wget -O jellyfin.tar.gz https://repo.jellyfin.org/files/server/linux/stable/v10.9.9/arm64/jellyfin_10.9.9-arm64.tar.gz
-# wget -O jellyfin.tar.gz https://repo.jellyfin.org/files/server/linux/stable/10.8.13/arm64/jellyfin_10.8.13_arm64.tar.gz
+architecture=""
+case $(uname -m) in
+    x86_64) wget -O jellyfin.tar.gz https://repo.jellyfin.org/files/server/linux/stable/v10.9.9/amd64/jellyfin_10.9.9-amd64.tar.gz ;;
+    aarch64)    wget -O jellyfin.tar.gz https://repo.jellyfin.org/files/server/linux/stable/v10.9.9/arm64/jellyfin_10.9.9-arm64.tar.gz ;;
+esac
+
 sudo mkdir -p /opt/jellyfin
 sudo rm -rf /opt/jellyfin/*
 sudo tar xvzf jellyfin.tar.gz --strip 1 -C /opt/jellyfin
@@ -115,7 +119,7 @@ SERVICE_UNIT="#!/bin/bash
 
 start() {
     echo \"Starting filebrowser...\"
-    nohup $FILEBROWSERDIR/filebrowser --root /config > /dev/null 2>&1 &
+    nohup $FILEBROWSERDIR/filebrowser --root /config --address 0.0.0.0 > /dev/null 2>&1 &
 }
 
 stop() {
