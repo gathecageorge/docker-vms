@@ -1,38 +1,20 @@
 ---
 volumes:
-  # ubuntu-alpine_data: {}
   ubuntu-xfce_data: {}
-  # ubuntu-mate_data: {}
-  # ubuntu-kde_data: {}
-  # ubuntu-i3_data: {}
-  # ubuntu-openbox_data: {}
-  # ubuntu-icewm_data: {}
 
 # https://hub.docker.com/r/linuxserver/webtop
 # https://www.linuxserver.io/blog/2021-05-05-meet-webtops-a-linux-desktop-environment-in-your-browser
 services:
-  # xfce-alpine:
-  #   image: lscr.io/linuxserver/webtop:latest
-  #   # security_opt:
-  #   #   - seccomp:unconfined #optional
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #     - SUBFOLDER=/ #optional
-  #     - TITLE=XFCE-Alpine-Media-Server
-  #   volumes:
-  #     - ubuntu-alpine_data:/config
-  #     # - /var/run/docker.sock:/var/run/docker.sock #optional
-  #   ports:
-  #     - 3000:3000
-  #   # devices:
-  #     # - /dev/dri:/dev/dri #optional
-  #   shm_size: "1gb"
-  #   restart: unless-stopped
-
   ubuntu-xfce:
+    # image: lscr.io/linuxserver/webtop:ubuntu-icewm
+    # image: lscr.io/linuxserver/webtop:ubuntu-openbox
+    # image: lscr.io/linuxserver/webtop:ubuntu-i3
+    # image: lscr.io/linuxserver/webtop:ubuntu-kde
+    # image: lscr.io/linuxserver/webtop:ubuntu-mate
+    # image: lscr.io/linuxserver/webtop:latest
     image: lscr.io/linuxserver/webtop:ubuntu-xfce
+    # security_opt:
+    #   - seccomp:unconfined #optional
     hostname: media-server
     environment:
       - PUID=1000
@@ -42,75 +24,12 @@ services:
       - TITLE=XFCE-Ubuntu-Media-Server
     volumes:
       - ubuntu-xfce_data:/config
-      - ./jellyfin.sh:/config/jellyfin-setup.sh
+      - ./jellyfin.sh:/usr/local/bin/jellyfin-setup.sh
     ports:
-      - 3007:3000
-      - 8096:8096
+      - 3007:3000 # UI for linux
+      - 8096:8096 # Jellyfin server
+      - 8097:8080 # For file browser
     shm_size: "1gb"
+    # devices:
+    #   - /dev/dri:/dev/dri #optional
     restart: unless-stopped
-
-  # ubuntu-mate:
-  #   image: lscr.io/linuxserver/webtop:ubuntu-mate
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ubuntu-mate_data:/config
-  #   ports:
-  #     - 3002:3000
-  #   shm_size: "1gb" #optional
-  #   restart: unless-stopped
-
-  # ubuntu-kde:
-  #   image: lscr.io/linuxserver/webtop:ubuntu-kde
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ubuntu-kde_data:/config
-  #   ports:
-  #     - 3003:3000
-  #   shm_size: "1gb" #optional
-  #   restart: unless-stopped
-
-  # ubuntu-i3:
-  #   image: lscr.io/linuxserver/webtop:ubuntu-i3
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ubuntu-i3_data:/config
-  #   ports:
-  #     - 3004:3000
-  #   shm_size: "1gb" #optional
-  #   restart: unless-stopped
-
-  # ubuntu-openbox:
-  #   image: lscr.io/linuxserver/webtop:ubuntu-openbox
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ubuntu-openbox_data:/config
-  #   ports:
-  #     - 3005:3000
-  #   shm_size: "1gb" #optional
-  #   restart: unless-stopped
-
-  # ubuntu-icewm:
-  #   image: lscr.io/linuxserver/webtop:ubuntu-icewm
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Etc/UTC
-  #   volumes:
-  #     - ubuntu-icewm_data:/config
-  #   ports:
-  #     - 3006:3000
-  #   shm_size: "1gb" #optional
-  #   restart: unless-stopped
-
