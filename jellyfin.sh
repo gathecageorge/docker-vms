@@ -2,10 +2,11 @@
 set -x #echo on
 
 #Tools required
+sudo cp /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/
 sudo apt update && sudo apt install -y psmisc wget curl nano
 
 # Download, extract jellyfin
-wget https://repo.jellyfin.org/releases/server/linux/stable/combined/jellyfin_10.8.13_arm64.tar.gz
+wget https://repo.jellyfin.org/files/server/linux/stable/10.8.13/arm64/jellyfin_10.8.13_arm64.tar.gz
 tar xvzf jellyfin_10.8.13_arm64.tar.gz
 sudo mv jellyfin_10.8.13 /opt/jellyfin
 rm jellyfin_10.8.13_arm64.tar.gz
