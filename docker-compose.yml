@@ -25,6 +25,8 @@ services:
     volumes:
       - ubuntu-xfce_data:/config
       - ./jellyfin.sh:/usr/local/bin/jellyfin-setup.sh
+      - ./movies.sh:/usr/local/bin/movies.sh
+      - ./series.sh:/usr/local/bin/series.sh
     ports:
       - 3007:3000 # UI for linux
       - 8096:8096 # Jellyfin server

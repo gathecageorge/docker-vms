@@ -4,8 +4,13 @@ set -x #echo on
 #Tools required
 sudo cp /etc/apt/trusted.gpg /etc/apt/trusted.gpg.d/
 sudo ln -s /usr/local/bin/jellyfin-setup.sh /config/jellyfin-setup.sh
+
+mkdir -p /config/Downloads
+sudo ln -s /usr/local/bin/movies.sh /config/Downloads/movies.sh
+sudo ln -s /usr/local/bin/series.sh /config/Downloads/series.sh
+
 sudo apt update
-sudo apt install -y psmisc wget curl nano geany transmission
+sudo apt install -y psmisc wget curl nano geany transmission unzip
 
 # Download, extract jellyfin
 architecture=""
