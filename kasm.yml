@@ -1,0 +1,63 @@
+---
+volumes:
+  ubuntu-jammy-dind-arm: {}
+  # ubuntu-jammy-dind-x64: {}
+  # ubuntu-jammy-desktop-arm: {}
+  # ubuntu-jammy-desktop-x64: {}
+
+services:
+  ubuntu-jammy-dind-arm:
+    # platform: linux/arm64
+    image: kasmweb/ubuntu-jammy-dind:aarch64-1.14.0-rolling
+    hostname: ubuntu-jammy-dind-arm
+    restart: unless-stopped
+    shm_size: "512m"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ubuntu-jammy-dind-arm:/home/kasm-user
+      - $HOME/Downloads:/home/kasm-user/HostDownloads
+    ports:
+      - 6901:6901
+    environment:
+      - VNC_PW=password
+
+  # ubuntu-jammy-dind-x64:
+  #   # platform: linux/amd64
+  #   image: kasmweb/ubuntu-jammy-dind:x86_64-1.14.0-rolling
+  #   hostname: ubuntu-jammy-dind-x64
+  #   restart: unless-stopped
+  #   shm_size: "512m"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ubuntu-jammy-dind-x64:/home/kasm-user
+  #     - $HOME/Downloads:/home/kasm-user/HostDownloads
+  #   ports:
+  #     - 6904:6901
+  #   environment:
+  #     - VNC_PW=password
+
+  # ubuntu-jammy-desktop-arm:
+  #   image: kasmweb/ubuntu-jammy-desktop:aarch64-1.14.0-rolling
+  #   hostname: ubuntu-jammy-desktop-arm
+  #   restart: unless-stopped
+  #   shm_size: "512m"
+  #   volumes:
+  #     - ubuntu-jammy-desktop-arm:/home/kasm-user
+  #     - $HOME/Downloads:/home/kasm-user/HostDownloads
+  #   ports:
+  #     - 6902:6901
+  #   environment:
+  #     - VNC_PW=password
+
+  # ubuntu-jammy-desktop-x64:
+  #   image: kasmweb/ubuntu-jammy-desktop:x86_64-1.14.0-rolling
+  #   hostname: ubuntu-jammy-desktop-x64
+  #   restart: unless-stopped
+  #   shm_size: "512m"
+  #   volumes:
+  #     - ubuntu-jammy-desktop-x64:/home/kasm-user
+  #     - $HOME/Downloads:/home/kasm-user/HostDownloads
+  #   ports:
+  #     - 6905:6901
+  #   environment:
+  #     - VNC_PW=password
